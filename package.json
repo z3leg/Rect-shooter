@@ -1,0 +1,11 @@
+{
+  "name": "simple--game",
+  "version": "1.0.0",
+  "description": "A simple physics simulator in P5 JS in its early development stages",
+  "main": "collisionDetectionSquares.js",
+  "scripts": {
+    "start": "browser-sync start --server -f -w"
+  },
+  "author": "",
+  "license": "ISC"
+}
