@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # P5JS-Physics-sim
 A simple physics simulator in P5 JS in its early development stages
 
@@ -25,3 +26,6 @@ Version number is the date that the particullar version was released on
 ### V2018-10-25
 * Basic collision detection and response is implemented
 * Three sliders added to adjust forces acting on the objects - bounce, airResistance and gravityForce
+=======
+# game-axel
+>>>>>>> 850b2b0a4d514ca7d0a9f7b81146a09f82853193
