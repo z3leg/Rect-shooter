@@ -1,10 +1,12 @@
 class Projectile {
-    constructor(pos, angle) {
-        this.pos = createVector(pos.x, pos.y);
-        this.vel = 4;
-        this.r = 5;
+    constructor(pos, angle, vel) {
+        this.vel = vel;
+        this.klass = "circle";
+        this.side = 5;
+        this.muzzlePos = 15;
         this.destination = p5.Vector.fromAngle(angle);
-        //this.destination.setMag(10);
+        this.pos = createVector(pos.x + (this.destination.x * this.muzzlePos),
+                                pos.y + (this.destination.y * this.muzzlePos));
     }
     
     update() {
@@ -15,6 +17,17 @@ class Projectile {
     }
 
     draw() {
-        ellipse(this.pos.x, this.pos.y, this.r, this.r);
+        ellipse(this.pos.x, this.pos.y, this.side, this.side);
+    }
+    outOfBoundaries() {
+        if (this.pos.x + this.side > width) {
+            return true;
+        } else if (this.pos.x - this.side < 0) {
+            return true;
+        } else if (this.pos.y + this.side > height) {
+            return true;
+        } else if (this.pos.y - this.side < 0) {
+            return true;
+        }
     }
 }
