@@ -16,14 +16,19 @@ class Trail {
             fill(255, 255, 255, this.trailArr[this.i].opacity);
             noStroke();
             ellipse(this.trailArr[this.i].pos.x, this.trailArr[this.i].pos.y, 5, 5);
+            if (this.trailArr[this.i].opacity < 1) {
+                this.trailArr.splice(this.i, 1);
+            }
         }
         pop();
     }
     
     update(cameraMove) {
-        if (this.spawnInterval % (60 / this.spawnSpeed) == 0) {
-            this.trailArr.push(new Trail());
-            this.spawnInterval = 0;
+        if (player1.vel.x != 0 || player1.vel.y != 0) {
+            if (this.spawnInterval % (60 / this.spawnSpeed) == 0) {
+                this.trailArr.push(new Trail());
+                this.spawnInterval = 0;
+            }
         }
         this.cameraMove = createVector(-cameraMove.x, -cameraMove.y);
 

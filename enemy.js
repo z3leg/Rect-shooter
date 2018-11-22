@@ -7,6 +7,7 @@ class Enemy {
         this.health = enemyHealth;
         this.side = 20;
         this.damage = enemyDamage;
+        this.uid = random(999999);
         
         this.hitInterval = 0;
     }
@@ -30,15 +31,17 @@ class Enemy {
     }
 
     update() {
-        //if (this.hitInterval < 60 / enemyHitSpeed) {
+        if (this.hitInterval < 60 / enemyHitSpeed) {
             this.hitInterval++; 
-        //}
+        }
 
         this.cameraMove = createVector(-player1.vel.x, -player1.vel.y);
         this.pos.add(this.cameraMove);
 
 
-        this.destination = createVector(width/2, height/2);
+        //push();
+        //translate(this.side/2, this.side/2)
+        this.destination = createVector(width/2 - this.side/2, height/2 - this.side/2);
         this.destination.sub(this.pos);
         this.destination.setMag(enemyMvmSpeed);
         this.acc = this.destination;
@@ -47,17 +50,23 @@ class Enemy {
         this.pos.add(this.vel);
         this.vel.limit(enemyMvmSpeedLimit);
         this.draw();
+        //pop();
         
     }
     
     draw() {
         push();
-        for (this.i = 0; this.i < this.enemies.length; this.i++) {
-            this.colorIntensity = (this.enemies[this.i].health / enemyHealth)
-            fill(255 * this.colorIntensity, 0, 0);
-            rect(this.enemies[this.i].pos.x, this.enemies[this.i].pos.y,
-                 this.enemies[this.i].side, this.enemies[this.i].side);
-        }
+        // for (this.i = 0; this.i < this.enemies.length; this.i++) {
+        //     this.colorIntensity = (this.enemies[this.i].health / enemyHealth)
+        //     fill(255 * this.colorIntensity, 0, 0);
+        //     rect(this.enemies[this.i].pos.x, this.enemies[this.i].pos.y,
+        //          this.enemies[this.i].side, this.enemies[this.i].side);
+        // }
+        this.colorIntensity = (this.health / enemyHealth)
+        fill(255 * this.colorIntensity, 0, 0);
+        rect(this.pos.x, this.pos.y,
+             this.side, this.side);
+
         pop();
     }
 

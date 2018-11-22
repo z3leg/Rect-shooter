@@ -1,5 +1,5 @@
 function setup() {
-	createCanvas(750,600);
+	createCanvas(windowWidth-10,windowHeight-10);
 	
 
 	player1 = new Player();
@@ -10,6 +10,7 @@ function setup() {
 	killCounter = 0;
 
 	trail = new Trail();
+	grid = new Grid(100,100);
 }
 
 
@@ -17,13 +18,13 @@ function setup() {
 function draw() {
 	background(51);
 
-	trail.update(player1.vel);
-	trail.draw();
-	//grid.draw(player1.vel);
-
+	grid.draw();
+	
 	//console.log(frameRate());
 	
+	trail.draw();
 	if (player1.health > 0) {
+		trail.update(player1.vel);
 		isKeyPressed = false;
 		if (keyIsDown(87)) { //W
 			player1.applyForce(createVector(0, -playerMvmSpeed));
@@ -73,14 +74,18 @@ function draw() {
 	}
 	
 	player1.update(player1.projectileAngle);
-	enemy.draw();
+	//enemy.draw();
 	//console.log(player1.vel);
 
 	
 
 
 
-
+	// if (enemy.enemies.length > 250) {
+	// 	enemyRenderAmount = 250;
+	// } else {
+		enemyRenderAmount = enemy.enemies.length;
+	//}
 
 	for (i = 0; i < enemy.enemies.length; i++) {
 
@@ -92,6 +97,9 @@ function draw() {
 		currentEnemy.update();
 
 		for (j = 0; j < enemy.enemies.length; j++) {
+			if (enemy.enemies[j] == null) {
+				break;
+			}
 			//Check if the distance between objects is enough to check the collision
 			if (dist( currentEnemy.pos.x, currentEnemy.pos.y, enemy.enemies[j].pos.x, enemy.enemies[j].pos.y) < currentEnemy.side*2 + 10 ) {
 
@@ -102,20 +110,43 @@ function draw() {
 			}
 		}
 		//Check if the distance between objects is enough to check the collision
-		//if (dist( currentEnemy.pos.x, currentEnemy.pos.y, player1.pos.x, player1.pos.y ) < player1.side + currentEnemy.side + 50 ) {
+		if (dist( currentEnemy.pos.x, currentEnemy.pos.y, player1.pos.x, player1.pos.y ) < player1.side + currentEnemy.side + 50 ) {
 			if ( CollisionDetectionSquares(currentEnemy, player1, false) ) {
 				if (currentEnemy.isHitCharged()) {
 					player1.takeDamage(currentEnemy.damage)
-					console.log("u got hit")
 					currentEnemy.hitInterval = 0;
 				}
 			}
-		//}
+		}
+
+		currentPiercedEnemy = enemy.enemies[i].uid
+
+		if (enemy.enemies[i - 1] == null) {
+			previousPiercedEnemy = enemy.enemies[i].uid;
+		} else {
+			previousPiercedEnemy = enemy.enemies[i - 1].uid
+		}
+
+
+
 		for (k = 0; k < player1.projectiles.length; k++) {
 			if (enemy.enemies.length > 0 && player1.projectiles.length > 0) {
 				if (!player1.projectiles[k].outOfBoundaries()) {
 					if (CollisionDetectionSquares(enemy.enemies[i], player1.projectiles[k], false)) {
-						player1.projectiles.splice(k, 1);
+
+						console.log(previousPiercedEnemy, currentPiercedEnemy)
+						if (currentPiercedEnemy == previousPiercedEnemy) {
+							break;
+						}
+
+						if (player1.projectiles[k].piercedAmount >= playerProjectilePiercingForce - 1) {
+							player1.projectiles.splice(k, 1);
+						} else {
+							player1.projectiles[k].piercedAmount += 1;
+						}
+
+						//previousPiercedEnemy = enemy.enemies[i]
+
 						enemy.enemies[i].takeDamage(player1.damage);
 						if (enemy.enemies[i].health <= 0) {
 							killCounter++;
@@ -125,5 +156,8 @@ function draw() {
 				}
 			}
 		}
+
+
+
 	}
 }

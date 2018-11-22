@@ -32,33 +32,6 @@ function CollisionDetectionSquares(obj1, obj2, offset) {
 		// 	trueDeltaY = obj2Middle.y - obj1Middle.y
 		// 	trueDeltaX = obj2Middle.x - obj1Middle.x
 
-
-		// 	//Delta correction so that the moving rectangle wont get caught on edges
-		// 	if (trueDeltaY == obj1.side/2 + obj2.side/2) {
-		// 		trueDeltaY += 0.000001;
-		// 	} else if (trueDeltaY == -(obj1.side/2 + obj2.side/2)) {
-		// 		trueDeltaY -= 0.000001;
-		// 	}
-
-		// 	if (trueDeltaX == obj1.side/2 + obj2.side/2) {
-		// 		trueDeltaX += 0.000001;
-		// 	} else if (trueDeltaX == -(obj1.side/2 + obj2.side/2)) {
-		// 		trueDeltaX -= 0.000001;
-		// 	}
-
-
-		// 	if (trueDeltaY < -(obj1.side/2 + obj2.side/2)) {
-		// 		this.collisionSide = "down";
-		// 	} else if (trueDeltaY > obj1.side/2 + obj2.side/2) {
-		// 		this.collisionSide = "up";
-		// 	}
-
-		// 	if (trueDeltaX < -(obj1.side/2 + obj2.side/2)) {
-		// 		this.collisionSide = "right";
-		// 	} else if (trueDeltaX > obj1.side/2 + obj2.side/2) {
-		// 		this.collisionSide = "left";
-		// 	}
-
 		// }
 
 
@@ -79,7 +52,6 @@ function CollisionDetectionSquares(obj1, obj2, offset) {
 		angleMode(DEGREES);
 		vectorLineInBoxLengthObj1 = ( (obj1.side/2) / cos(vectorLineAngle) );
 		vectorLineInBoxLengthObj2 = ( (obj2.side/2) / cos(vectorLineAngle) );
-
 		//Converting back to angleMode RADIANS so it doesn't mess up other calculations
 		angleMode(RADIANS);
 
@@ -95,8 +67,6 @@ function CollisionDetectionSquares(obj1, obj2, offset) {
 		}
 		//Calculating the collision with trigonometry:
 		if (vectorLineLength < vectorLineInBoxLengthObj1 + offset + vectorLineInBoxLengthObj2 + offset) {
-			//console.log('vectorLineInBoxLengthObj1', vectorLineInBoxLengthObj1);
-			//console.log('vectorLineInBoxLengthObj2', vectorLineInBoxLengthObj2)
 			return true;
 		} else {
 			return false;

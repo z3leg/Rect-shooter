@@ -31,6 +31,7 @@ class Player {
         this.health -= damage;
         if (this.health < 0) {
             this.isAlive = false;
+            this.vel.mult(0);
         }
     }
 
@@ -47,7 +48,7 @@ class Player {
                 this.shootInterval++;
             }
             this.vel.add(this.acc);
-            this.pos.add(this.vel);
+            //this.pos.add(this.vel);
             this.vel.limit(playerMvmSpeedLimit);
             this.acc.mult(0);
             this.edges();

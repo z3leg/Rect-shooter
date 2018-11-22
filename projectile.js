@@ -7,10 +7,15 @@ class Projectile {
         this.destination = p5.Vector.fromAngle(angle);
         this.pos = createVector(pos.x + (this.destination.x * this.muzzlePos),
                                 pos.y + (this.destination.y * this.muzzlePos));
+        this.piercingForce = playerProjectilePiercingForce;
+        this.piercedAmount = 0;
     }
     
     update() {
         this.destination.setMag(this.vel);
+        this.cameraMove = createVector(-player1.vel.x, -player1.vel.y);
+        this.pos.add(this.cameraMove)
+
         this.pos.add(this.destination);
         this.draw();
 

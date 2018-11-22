@@ -5,8 +5,9 @@
     playerRotateSpeed = 0.5;
 
     //PLAYER SHOOTING
-    playerShootingSpeed = 10;
-    playerProjectileVelocity = 20;
+    playerShootingSpeed = 2;
+    playerProjectileVelocity = 5;
+    playerProjectilePiercingForce = 2;
     playerDamage = 10;
 
     //PLAYER OTHER
@@ -19,8 +20,8 @@
     enemyMvmSpeedLimit = 1; 
 
     //ENEMY COMBAT
-    enemyDamage = 5;
-    enemyHitSpeed = 10;
+    enemyDamage = 0;
+    enemyHitSpeed = 3;
 
     //ENEMY OTHER
     enemyHealth = 100;
