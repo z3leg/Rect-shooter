@@ -1,50 +1,60 @@
 function setup() {
-	createCanvas(600,500);
+	createCanvas(750,600);
 	
 
 	player1 = new Player();
 
 	enemy = new Enemy();
-	enemy.spawn(50);
+	enemy.spawn(1);
+
+	killCounter = 0;
+
+	trail = new Trail();
 }
 
 
 
 function draw() {
 	background(51);
-	
-	
-	isKeyPressed = false;
-	if (keyIsDown(87)) { //W
-		player1.applyForce(createVector(0, -playerMvmSpeed));
-		isKeyPressed = true;
-	}
-	if (keyIsDown(83)) { //S
-		player1.applyForce(createVector(0, playerMvmSpeed));
-		isKeyPressed = true;
-	}
-	if (keyIsDown(65)) { //A
-		player1.applyForce(createVector(-playerMvmSpeed, 0));
-		isKeyPressed = true;
-	}
-	if (keyIsDown(68)) { //D
-		player1.applyForce(createVector(playerMvmSpeed, 0));
-		isKeyPressed = true;
-	}
-	if (keyIsDown(LEFT_ARROW)) {
-		player1.projectileAngle -= playerRotateSpeed/10;
-	}
-	if (keyIsDown(RIGHT_ARROW)) {
-		player1.projectileAngle += playerRotateSpeed/10;
-	}
 
-	if (keyIsDown(32)) { //SPACE
-		player1.shoot();
+	trail.update(player1.vel);
+	trail.draw();
+	//grid.draw(player1.vel);
+
+	//console.log(frameRate());
+	
+	if (player1.health > 0) {
+		isKeyPressed = false;
+		if (keyIsDown(87)) { //W
+			player1.applyForce(createVector(0, -playerMvmSpeed));
+			isKeyPressed = true;
+		}
+		if (keyIsDown(83)) { //S
+			player1.applyForce(createVector(0, playerMvmSpeed));
+			isKeyPressed = true;
+		}
+		if (keyIsDown(65)) { //A
+			player1.applyForce(createVector(-playerMvmSpeed, 0));
+			isKeyPressed = true;
+		}
+		if (keyIsDown(68)) { //D
+			player1.applyForce(createVector(playerMvmSpeed, 0));
+			isKeyPressed = true;
+		}
+		if (keyIsDown(LEFT_ARROW)) {
+			player1.projectileAngle -= playerRotateSpeed/10;
+		}
+		if (keyIsDown(RIGHT_ARROW)) {
+			player1.projectileAngle += playerRotateSpeed/10;
+		}
+
+		if (keyIsDown(32)) { //SPACE
+			player1.shoot();
+		}
 	}
 	if (keyIsDown(70)) { //F
 		enemy.spawn(50);
 	}
-
 
 
 	
@@ -61,37 +71,59 @@ function draw() {
 			player1.projectiles.splice(i, 1);
 		}
 	}
-
 	
 	player1.update(player1.projectileAngle);
-	enemy.update();
+	enemy.draw();
+	//console.log(player1.vel);
 
 	
+
+
+
+
+
 	for (i = 0; i < enemy.enemies.length; i++) {
-		enemy.enemies[i].update();
+
+		currentEnemy = enemy.enemies[i];
+
+		if (currentEnemy == null) {
+			break;
+		}
+		currentEnemy.update();
+
 		for (j = 0; j < enemy.enemies.length; j++) {
-			if (i != j && CollisionDetectionSquares(enemy.enemies[i], enemy.enemies[j], true)) {
-				enemy.enemies[i].pushAway(enemy.enemies[j]);
-				enemy.enemies[j].pushAway(enemy.enemies[i]);
+			//Check if the distance between objects is enough to check the collision
+			if (dist( currentEnemy.pos.x, currentEnemy.pos.y, enemy.enemies[j].pos.x, enemy.enemies[j].pos.y) < currentEnemy.side*2 + 10 ) {
+
+				if (i != j && CollisionDetectionSquares(currentEnemy, enemy.enemies[j], true)) {
+					currentEnemy.pushAway(enemy.enemies[j]);
+					enemy.enemies[j].pushAway(currentEnemy);
+				}
 			}
 		}
-		if ( CollisionDetectionSquares(enemy.enemies[i], player1, false) ) {
-			//player1.isAlive = false;
-		}
-		
-	}
-	
-	for (j = 0; j < enemy.enemies.length; j++) {
-		for (i = 0; i < player1.projectiles.length; i++) {
+		//Check if the distance between objects is enough to check the collision
+		//if (dist( currentEnemy.pos.x, currentEnemy.pos.y, player1.pos.x, player1.pos.y ) < player1.side + currentEnemy.side + 50 ) {
+			if ( CollisionDetectionSquares(currentEnemy, player1, false) ) {
+				if (currentEnemy.isHitCharged()) {
+					player1.takeDamage(currentEnemy.damage)
+					console.log("u got hit")
+					currentEnemy.hitInterval = 0;
+				}
+			}
+		//}
+		for (k = 0; k < player1.projectiles.length; k++) {
 			if (enemy.enemies.length > 0 && player1.projectiles.length > 0) {
-				if (!player1.projectiles[i].outOfBoundaries()) {
-					if (CollisionDetectionSquares(enemy.enemies[j], player1.projectiles[i], false)) {
-						player1.projectiles.splice(i, 1);
-						enemy.enemies.splice(j, 1);
+				if (!player1.projectiles[k].outOfBoundaries()) {
+					if (CollisionDetectionSquares(enemy.enemies[i], player1.projectiles[k], false)) {
+						player1.projectiles.splice(k, 1);
+						enemy.enemies[i].takeDamage(player1.damage);
+						if (enemy.enemies[i].health <= 0) {
+							killCounter++;
+							enemy.enemies.splice(i, 1);
+						}
 					}
 				}
 			}
 		}
 	}
-	//frameRate(30)
 }

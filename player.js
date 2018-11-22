@@ -3,10 +3,12 @@ class Player {
         this.vel = createVector(0, 0);
         this.acc = createVector(0, 0);
         this.side = 30;
-        this.pos = createVector(random(this.side *2,width-60), random(this.side *2,height-60));
+        this.pos = createVector(width/2, height/2);
         this.projectiles = [];
         this.klass = "circle";
         this.isAlive = true;
+        this.health = playerHealth;
+        this.damage = playerDamage;
 
         this.shootInterval = 0;
         this.projectileAngle = 0;
@@ -17,11 +19,25 @@ class Player {
     }
     shoot() {
         push();
+        this.drawPos = createVector(width/2, height/2);
         rotate(this.projectileAngle);
         if (this.shootInterval % (60 / playerShootingSpeed) == 0) {
-            this.projectiles.push(new Projectile(this.pos, this.projectileAngle, playerProjectileVelocity));
+            this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle, playerProjectileVelocity));
 			this.shootInterval = 0;
 		}
+        pop();
+    }
+    takeDamage(damage) {
+        this.health -= damage;
+        if (this.health < 0) {
+            this.isAlive = false;
+        }
+    }
+
+    healthBar() {
+        push();
+        fill(0, 255, 0, 150);
+        rect(width/2 - this.side, height/2 + this.side/2 + 5, this.health/1.5, 5);
         pop();
     }
 
@@ -36,13 +52,14 @@ class Player {
             this.acc.mult(0);
             this.edges();
             this.draw(this.projectileAngle);
+            this.healthBar();
         }
     }
 
     draw(angle) {
         push();
         this.angle = angle;
-        translate(this.pos.x, this.pos.y)
+        translate(width/2, height/2)
         rotate(angle);
         ellipse(0, 0, this.side, this.side);
         rect(0, -5, 20, 10);
