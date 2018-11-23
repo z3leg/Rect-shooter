@@ -24,7 +24,7 @@ class Trail {
     }
     
     update(cameraMove) {
-        if (player1.vel.x != 0 || player1.vel.y != 0) {
+        if (Math.abs(player1.vel.x) > 0.4 || Math.abs(player1.vel.y) > 0.4) {
             if (this.spawnInterval % (60 / this.spawnSpeed) == 0) {
                 this.trailArr.push(new Trail());
                 this.spawnInterval = 0;

@@ -1,15 +1,42 @@
 class Enemy {
-    constructor() {
+    constructor(arg) {
         this.enemies = [];
-        this.pos = createVector(random(width), random(height));
-        this.vel = createVector(0, 0);
-        this.acc = createVector(0,0)
-        this.health = enemyHealth;
-        this.side = 20;
-        this.damage = enemyDamage;
-        this.uid = random(999999);
-        
-        this.hitInterval = 0;
+        if (arg != false) {
+
+            if ( random(1) > 0.5) {
+                this.pos = createVector(random(-width, 0), random(-height, height*2));
+            } else {
+                this.pos = createVector(random(width, width*2), random(-height, height*2));
+            }
+
+            //this.pos = createVector(100, 100);
+
+            this.hitInterval = 0;
+            this.vel = createVector(0, 0);
+            this.acc = createVector(0,0)
+            this.lastPiercingObject = -1;
+            this.klass = 'enemy';
+            
+
+            this.currType = enemiesArr[Math.round(random(2))];
+            //RETURNS HASH
+
+            
+            this.xpDrop = player1.lvl + 1 * Math.round(random(4,9));
+            this.lvl = player1.lvl + Math.round(random(1,3));
+            
+            this.mvmSpeed = this.currType['mvmSpeed'];
+            this.mvmSpeedLimit = this.currType['mvmSpeedLimit'];
+            this.damage = this.currType['damage'];
+            this.hitSpeed = this.currType['hitSpeed'];
+            this.health = this.currType['health'] + this.lvl;
+            this.maxHealth = this.health
+            this.side = this.currType['side'];
+            this.color = this.currType['color'];
+
+            //console.log(this.mvmSpeed, this.mvmSpeedLimit, this.damage, this.hitSpeed, this.health, this.side, this.color)
+            
+        }
     }
 
     spawn(amount) {
@@ -23,7 +50,7 @@ class Enemy {
     }
 
     isHitCharged() {
-        if (this.hitInterval % (60 / enemyHitSpeed) == 0) {
+        if (this.hitInterval % (60 / this.hitSpeed) == 0) {
             return true;
         } else {
             return false;
@@ -31,7 +58,7 @@ class Enemy {
     }
 
     update() {
-        if (this.hitInterval < 60 / enemyHitSpeed) {
+        if (this.hitInterval < 60 / this.hitSpeed) {
             this.hitInterval++; 
         }
 
@@ -43,39 +70,50 @@ class Enemy {
         //translate(this.side/2, this.side/2)
         this.destination = createVector(width/2 - this.side/2, height/2 - this.side/2);
         this.destination.sub(this.pos);
-        this.destination.setMag(enemyMvmSpeed);
+        this.destination.setMag(0.4);
+        //console.log(this.destination)
         this.acc = this.destination;
 
         this.vel.add(this.acc);
         this.pos.add(this.vel);
-        this.vel.limit(enemyMvmSpeedLimit);
+        this.vel.limit(this.mvmSpeedLimit);
         this.draw();
         //pop();
         
     }
+
+    outOfBounds() {
+        if (this.pos.x + this.side < 0 || this.pos.y + this.side < 0) {
+            return true;
+        } else if (this.pos.x > width || this.pos.y > height) {
+            return true;
+        }
+    }
     
     draw() {
-        push();
-        // for (this.i = 0; this.i < this.enemies.length; this.i++) {
-        //     this.colorIntensity = (this.enemies[this.i].health / enemyHealth)
-        //     fill(255 * this.colorIntensity, 0, 0);
-        //     rect(this.enemies[this.i].pos.x, this.enemies[this.i].pos.y,
-        //          this.enemies[this.i].side, this.enemies[this.i].side);
-        // }
-        this.colorIntensity = (this.health / enemyHealth)
-        fill(255 * this.colorIntensity, 0, 0);
-        rect(this.pos.x, this.pos.y,
-             this.side, this.side);
-
-        pop();
+        if (!this.outOfBounds()) {
+            push();
+            stroke(255);
+            this.colorIntensity = (this.health / this.maxHealth);
+            fill(this.color[0] * this.colorIntensity,
+                 this.color[1]  * this.colorIntensity,
+                 this.color[2]  * this.colorIntensity);
+            rect(this.pos.x, this.pos.y, this.side, this.side);  
+            pop();
+        }
     }
 
     pushAway(other) {
         this.pushForce = createVector(other.pos.x, other.pos.y);
         this.pushForce.sub(this.pos);
         this.pushForce.mult(-1);
-        this.pushForce.setMag(1);
+        if (other.klass == 'circle') {
+            this.pushForce.setMag(this.mvmSpeedLimit *1.15);
+        } else {
+            this.pushForce.setMag(this.mvmSpeed);
+        }
 
         this.pos.add(this.pushForce);
     }
+
 }

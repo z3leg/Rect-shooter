@@ -9,9 +9,14 @@ class Player {
         this.isAlive = true;
         this.health = playerHealth;
         this.damage = playerDamage;
-
+        
         this.shootInterval = 0;
         this.projectileAngle = 0;
+
+
+        this.kills = 0;
+        this.xp = 0;
+        this.lvl = 0;
     }
 
     applyForce(force) {
@@ -58,6 +63,10 @@ class Player {
     }
 
     draw(angle) {
+        textSize(30);
+        fill(255);
+        text("kills: " + this.kills, 10, 25);
+        text("xp: " + this.xp, 10, 60);
         push();
         this.angle = angle;
         translate(width/2, height/2)
