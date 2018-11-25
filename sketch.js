@@ -1,8 +1,9 @@
 function setup() {
-	createCanvas(windowWidth-4,windowHeight-4);
+	canvas = createCanvas(windowWidth-5,windowHeight-5);
 	
 
 	player1 = new Player();
+	shooting = false;
 
 	enemy = new Enemy(false);
 	enemy.spawn(1);
@@ -10,28 +11,29 @@ function setup() {
 
 	trail = new Trail();
 	grid = new Grid(300,300);
+	particle = new Particle();
+
+	//console.log(particle)
 
 	deathScreenVal = 0;
+	frameRateInterval = 0;
+	//addEventListener(onmousedown, console.log("so"));
 }
 
 
 
 function draw() {
-	
 	background(51);
 	grid.draw();
 	
-	//console.log(frameRate());
-	
-	trail.draw();
+	//trail.draw();
 
 	if (player1.health > 0) {
 		trail.update(player1.vel);
 		isKeyPressed = false;
-		if (keyIsDown(87)) { //W
-			player1.applyForce(createVector(0, -playerMvmSpeed));
-			isKeyPressed = true;
-		}
+
+		if (keyIsDown(87)) { player1.applyForce(createVector(0, -playerMvmSpeed)), isKeyPressed = true;} //W
+
 		if (keyIsDown(83)) { //S
 			player1.applyForce(createVector(0, playerMvmSpeed));
 			isKeyPressed = true;
@@ -44,19 +46,37 @@ function draw() {
 			player1.applyForce(createVector(playerMvmSpeed, 0));
 			isKeyPressed = true;
 		}
-		if (keyIsDown(LEFT_ARROW)) {
-			player1.projectileAngle -= playerRotateSpeed/10;
+
+		if (playerControlls['mouse']) {
+			vMouse = createVector(mouseX-width/2, mouseY-height/2);
+			player1.projectileAngle = vMouse.heading()
+		} else if (playerControlls['keyboard']) {
+			if (keyIsDown(LEFT_ARROW)) {
+				player1.projectileAngle -= playerRotateSpeed;
+			}
+			if (keyIsDown(RIGHT_ARROW)) {
+				player1.projectileAngle += playerRotateSpeed;
+			}
 		}
-		if (keyIsDown(RIGHT_ARROW)) {
-			player1.projectileAngle += playerRotateSpeed/10;
+
+
+		//Player shooting
+		onmousedown = function(){shooting = true};
+		onmouseup = function(){shooting = false};
+
+		if (shooting) {
+			player1.shoot();
 		}
+
 
 		if (keyIsDown(32)) { //SPACE
 			player1.shoot();
 		}
 
 	} else {
-		if (deathScreenVal < 255) {
+
+		//Deathscreen
+		if (deathScreenVal < 200) {
 			deathScreenVal++;
 		}
 		push();
@@ -69,6 +89,8 @@ function draw() {
 		text("You died", width/2, height/2)
 		pop();
 	}
+
+
 	if (keyIsDown(78)) { //N
 		for (i = 0; i < enemy.enemies.length; i++) {
 			enemy.enemies.splice(i, 1);
@@ -76,8 +98,6 @@ function draw() {
 	}
 	if (keyIsDown(70)) { //F
 		enemy.spawn(50);
-		//console.log(random(width, width*2), random(0, height*2));
-		//console.log(random(-width, 0), random(-height, height));
 	}
 
 
@@ -89,14 +109,18 @@ function draw() {
 		player1.applyForce(createVector(-player1.vel.x * 0.1, -player1.vel.y * 0.1));
 	}
 
+
+	//Removing projectiles when they exceed the travel dist
 	for (i = 0; i < player1.projectiles.length; i++) {
 		player1.projectiles[i].update();
-		if (player1.projectiles[i].currTravelDist > playerProjectileTravelDist) {
+		if (player1.projectiles[i].currTravelDist > player1.projectiles[i].travelDist) {
 			player1.projectiles.splice(i, 1);
 		}
 	}
 	
 	player1.update(player1.projectileAngle);
+
+	//particle.particlesArr.update();
 
 
 	
@@ -106,14 +130,22 @@ function draw() {
 	push();
 	fill(255);
 	textSize(30)
-	text(frameRate(), 680, 20)
-	text(enemy.enemies.length, 570, 20)
+	if (frameRateInterval > 10) {
+		frames = frameRate().toFixed(1)
+		frameRateInterval = 0;
+	} else {
+		frameRateInterval++
+	}
+	text(frames, 680, 30)
+
+	text(enemy.enemies.length, 570, 30)
 	pop();
 
+
+
+
+	//Big loop
 	for (i = 0; i < maxRender; i++) {
-		//if (i > maxRender) {
-		//	break;
-		//}
 
 		currentEnemy = enemy.enemies[i];
 
@@ -156,32 +188,58 @@ function draw() {
 			
 
 
+		//Collision between projectiles and enemies
 		for (k = 0; k < player1.projectiles.length; k++) {
 			if (enemy.enemies.length > 0 && player1.projectiles.length > 0) {
 				if (CollisionDetectionSquares(enemy.enemies[i], player1.projectiles[k], false)) {
 
 					//If the currenct piercing object is the same, dont deal any damage
 					if (enemy.enemies[i].lastPiercingObject != player1.projectiles[k].uid) {
-						if (player1.projectiles[k].piercedAmount >= playerProjectilePiercingForce - 1) {
-							player1.projectiles.splice(k, 1);
-						} else {
-							player1.projectiles[k].piercedAmount += 1;
-						}
-						
+
 						
 						enemy.enemies[i].takeDamage(player1.damage);
+						player1.projectiles[k].piercingForce -= enemy.enemies[i].armor;
+						
+						//Enemy death
 						if (enemy.enemies[i].health <= 0) {
 							player1.kills++;
 							player1.xp += enemy.enemies[i].xpDrop;
+
+							particle.spawn(5, enemy.enemies[i], player1.projectiles[k].destination);
+
 							enemy.enemies.splice(i, 1);
 						} else {
-							if (player1.projectiles[k] != null) {
-								enemy.enemies[i].lastPiercingObject = player1.projectiles[k].uid;
-							}
+							enemy.enemies[i].lastPiercingObject = player1.projectiles[k].uid;
+						}
+						
+						//Projectile death
+						if (player1.projectiles[k].piercingForce <= 0) {
+							player1.projectiles.splice(k, 1);
 						}
 					}
 				}
 			}
+		}
+		
+		// if (particle.particlesArr.length > 0 && i < particle.particlesArr.length) {
+		// 	//drawing particles
+		// 	particle.particlesArr[i].update();
+
+			
+		// 	if (particle.particlesArr[i].opacity < 0) {
+		// 		particle.particlesArr.splice(i, 1);
+		// 	}
+		// }
+	}
+
+	//drawing particles
+	for (u = 0; u < particle.particlesArr.length; u++) {
+
+		particle.particlesArr[u].update();
+		
+		
+		if (particle.particlesArr[u].opacity < 1) {
+			particle.particlesArr.splice(u, 1);
 		}
 	}
 }

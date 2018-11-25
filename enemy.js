@@ -9,7 +9,7 @@ class Enemy {
                 this.pos = createVector(random(width, width*2), random(-height, height*2));
             }
 
-            //this.pos = createVector(100, 100);
+            //this.pos = createVector(500, 300);
 
             this.hitInterval = 0;
             this.vel = createVector(0, 0);
@@ -18,21 +18,25 @@ class Enemy {
             this.klass = 'enemy';
             
 
-            this.currType = enemiesArr[Math.round(random(2))];
+            this.currType = enemiesArr[1]
+            this.currType = enemiesArr[Math.round(random(enemiesArr.length-1))];
             //RETURNS HASH
 
             
             this.xpDrop = player1.lvl + 1 * Math.round(random(4,9));
-            this.lvl = player1.lvl + Math.round(random(1,3));
+            this.lvl = player1.lvl + ( Math.round(random(1,3) *player1.lvl) );
             
             this.mvmSpeed = this.currType['mvmSpeed'];
             this.mvmSpeedLimit = this.currType['mvmSpeedLimit'];
             this.damage = this.currType['damage'];
             this.hitSpeed = this.currType['hitSpeed'];
-            this.health = this.currType['health'] + this.lvl;
-            this.maxHealth = this.health
+            this.health = this.currType['health'] * (this.lvl + 1);
+            this.maxHealth = this.health;
+            this.armor = this.currType['armor'];
             this.side = this.currType['side'];
             this.color = this.currType['color'];
+            this.outline = this.currType['outline'];
+
 
             //console.log(this.mvmSpeed, this.mvmSpeedLimit, this.damage, this.hitSpeed, this.health, this.side, this.color)
             
@@ -93,11 +97,13 @@ class Enemy {
     draw() {
         if (!this.outOfBounds()) {
             push();
-            stroke(255);
+            this.outline === true ? stroke(255) : noStroke();
             this.colorIntensity = (this.health / this.maxHealth);
             fill(this.color[0] * this.colorIntensity,
                  this.color[1]  * this.colorIntensity,
-                 this.color[2]  * this.colorIntensity);
+                 this.color[2]  * this.colorIntensity,
+                 this.color[3]);
+
             rect(this.pos.x, this.pos.y, this.side, this.side);  
             pop();
         }

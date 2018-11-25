@@ -2,16 +2,21 @@ class Player {
     constructor() {
         this.vel = createVector(0, 0);
         this.acc = createVector(0, 0);
-        this.side = 30;
         this.pos = createVector(width/2, height/2);
         this.projectiles = [];
         this.klass = "circle";
         this.isAlive = true;
-        this.health = playerHealth;
-        this.damage = playerDamage;
-        
-        this.shootInterval = 0;
+        this.shootInterval = 60;
         this.projectileAngle = 0;
+        this.side = 30;
+        this.shooting = false;
+
+        this.weapon = playerWeaponsArr[playerCurrWeapon]; //returns hash
+         
+        this.health = playerHealth;
+        this.shootingSpeed = this.weapon['shootingSpeed'];
+        this.damage = this.weapon['damage'];
+        
 
 
         this.kills = 0;
@@ -26,15 +31,15 @@ class Player {
         push();
         this.drawPos = createVector(width/2, height/2);
         rotate(this.projectileAngle);
-        if (this.shootInterval % (60 / playerShootingSpeed) == 0) {
-            this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle, playerProjectileVelocity));
-			this.shootInterval = 0;
+        if (this.shootInterval - this.shootingSpeed <= 0) {
+            this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle, this.weapon));
+			this.shootInterval = 60;
 		}
         pop();
     }
     takeDamage(damage) {
         this.health -= damage;
-        if (this.health < 0) {
+        if (this.health <= 0) {
             this.isAlive = false;
             this.vel.mult(0);
         }
@@ -42,21 +47,32 @@ class Player {
 
     healthBar() {
         push();
-        fill(0, 255, 0, 150);
-        rect(width/2 - this.side, height/2 + this.side/2 + 5, this.health/1.5, 5);
+        fill(0, 255, 0, 255);
+
+        //one rect
+        rect(width/2 - (this.health/2) /2, //X
+            height/2 + this.side/2 + 5, //Y
+            (this.health) /2, 5);  //Width & Height
+
         pop();
     }
 
     update() {
         if (this.isAlive) {
-            if (this.shootInterval < 60 / playerShootingSpeed) {
-                this.shootInterval++;
+
+            onmousedown = function(){this.shooting = true};
+            onmouseup = function(){this.shooting = false};
+            
+            if (this.shooting) {
+                this.shoot();
             }
+
+            this.shootInterval--;
+
             this.vel.add(this.acc);
             //this.pos.add(this.vel);
             this.vel.limit(playerMvmSpeedLimit);
             this.acc.mult(0);
-            this.edges();
             this.draw(this.projectileAngle);
             this.healthBar();
         }
@@ -67,6 +83,7 @@ class Player {
         fill(255);
         text("kills: " + this.kills, 10, 25);
         text("xp: " + this.xp, 10, 60);
+        text("lvl: " + this.lvl, 10, 100);
         push();
         this.angle = angle;
         translate(width/2, height/2)
@@ -76,17 +93,5 @@ class Player {
         pop();
     }
 
-    edges() {
-        if (this.pos.x < this.side/2) {
-            this.pos.x = this.side/2;
-        } else if (this.pos.x > width - this.side/2) {
-            this.pos.x = width - this.side/2;
-        }
-
-        if (this.pos.y < this.side/2) {
-            this.pos.y = this.side/2;
-        } else if (this.pos.y > height - this.side/2) {
-            this.pos.y = height - this.side/2;
-        }
-    }
+    
 }
