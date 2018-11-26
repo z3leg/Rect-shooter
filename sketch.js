@@ -3,7 +3,6 @@ function setup() {
 	
 
 	player1 = new Player();
-	shooting = false;
 
 	enemy = new Enemy(false);
 	enemy.spawn(1);
@@ -12,6 +11,7 @@ function setup() {
 	trail = new Trail();
 	grid = new Grid(300,300);
 	particle = new Particle();
+	eventHandler = new EvenHandler();
 
 	//console.log(particle)
 
@@ -23,55 +23,20 @@ function setup() {
 
 
 function draw() {
+	//frameRate(20)
+
+
 	background(51);
 	grid.draw();
 	
 	//trail.draw();
 
 	if (player1.health > 0) {
-		trail.update(player1.vel);
-		isKeyPressed = false;
+		//trail.update(player1.vel);
 
-		if (keyIsDown(87)) { player1.applyForce(createVector(0, -playerMvmSpeed)), isKeyPressed = true;} //W
-
-		if (keyIsDown(83)) { //S
-			player1.applyForce(createVector(0, playerMvmSpeed));
-			isKeyPressed = true;
-		}
-		if (keyIsDown(65)) { //A
-			player1.applyForce(createVector(-playerMvmSpeed, 0));
-			isKeyPressed = true;
-		}
-		if (keyIsDown(68)) { //D
-			player1.applyForce(createVector(playerMvmSpeed, 0));
-			isKeyPressed = true;
-		}
-
-		if (playerControlls['mouse']) {
-			vMouse = createVector(mouseX-width/2, mouseY-height/2);
-			player1.projectileAngle = vMouse.heading()
-		} else if (playerControlls['keyboard']) {
-			if (keyIsDown(LEFT_ARROW)) {
-				player1.projectileAngle -= playerRotateSpeed;
-			}
-			if (keyIsDown(RIGHT_ARROW)) {
-				player1.projectileAngle += playerRotateSpeed;
-			}
-		}
+		eventHandler.update();
 
 
-		//Player shooting
-		onmousedown = function(){shooting = true};
-		onmouseup = function(){shooting = false};
-
-		if (shooting) {
-			player1.shoot();
-		}
-
-
-		if (keyIsDown(32)) { //SPACE
-			player1.shoot();
-		}
 
 	} else {
 
@@ -100,14 +65,6 @@ function draw() {
 		enemy.spawn(50);
 	}
 
-
-	
-	
-
-	//Slows the player down if no movement keys are pressed
-	if (!isKeyPressed && Math.abs(player1.vel.x) > 0 || Math.abs(player1.vel.y) > 0) {
-		player1.applyForce(createVector(-player1.vel.x * 0.1, -player1.vel.y * 0.1));
-	}
 
 
 	//Removing projectiles when they exceed the travel dist
@@ -205,7 +162,9 @@ function draw() {
 							player1.kills++;
 							player1.xp += enemy.enemies[i].xpDrop;
 
+
 							particle.spawn(5, enemy.enemies[i], player1.projectiles[k].destination);
+
 
 							enemy.enemies.splice(i, 1);
 						} else {
@@ -231,15 +190,18 @@ function draw() {
 		// 	}
 		// }
 	}
+	if (particle.particlesArr.length > 0) {
+		particle.update()
+	}
 
 	//drawing particles
-	for (u = 0; u < particle.particlesArr.length; u++) {
+	//for (u = 0; u < particle.particlesArr.length; u++) {
 
-		particle.particlesArr[u].update();
+		//particle.particlesArr[u].update();
 		
 		
-		if (particle.particlesArr[u].opacity < 1) {
-			particle.particlesArr.splice(u, 1);
-		}
-	}
+		//if (particle.particlesArr[u].opacity < 1) {
+		//	particle.particlesArr.splice(u, 1);
+		//}
+	//}
 }

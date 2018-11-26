@@ -1,17 +1,18 @@
 //PLAYER
     //PLAYER MOVEMENT
     playerMvmSpeed = 0.40;
-    playerMvmSpeedLimit = 3;
+    playerMvmSpeedLimit = 4;
     playerRotateSpeed = 0.05;
-    playerControlls = {keyboard: false, mouse: true};
+
+    playerControlls = {shooting: "keyboard", rotating: "keyboard"};
 
     //PLAYER WEAPONS
-    playerWeaponType1 = {name: "pistol", klass: 'rectangle', shootingSpeed: 40, damage: 5, projectilePiercingForce: 1, projectileVelocity: 50, 
-                        projectileTravelDist: 1000, rapidFire: false, projectileHeight: 40, projectileWidth: 15, projectileColor: [255, 209, 0], outline: false};
+    playerWeaponType1 = {name: "pistol", klass: 'rectangle', shootingSpeed: 40, damage: 5, projectilePiercingForce: 1, projectileVelocity: 20, 
+                        projectileTravelDist: 1000, rapidFire: false, projectileHeight: 15, projectileWidth: 10, projectileColor: [255, 209, 0], outline: false};
 
 
     playerWeaponType2 = {name: "ray of doom", klass: 'rectangle', shootingSpeed: 60, damage: 10, projectilePiercingForce: 100, projectileVelocity: 60, 
-                        projectileTravelDist: 2000, rapidFire: true, projectileHeight: 75, projectileWidth: 10, projectileColor: [0, 161, 255], outline: false};
+                        projectileTravelDist: 2000, rapidFire: true, projectileHeight: 70, projectileWidth: 10, projectileColor: [0, 161, 255], outline: false};
 
     playerWeaponsArr = [playerWeaponType1, playerWeaponType2];
     playerCurrWeapon = 0;
