@@ -12,6 +12,10 @@ Particles:
     Better Particles starting pos by mapping each particle position as the initial object
 
 
+Projectiles:
+    Multiple projectiles for different gun types
+
+
 Other: 
    DONE!### Add a eventHandler class file to handle all user inputs
 

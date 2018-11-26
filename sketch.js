@@ -3,6 +3,7 @@ function setup() {
 	
 
 	player1 = new Player();
+	mousePress = false
 
 	enemy = new Enemy(false);
 	enemy.spawn(1);
@@ -18,6 +19,8 @@ function setup() {
 	deathScreenVal = 0;
 	frameRateInterval = 0;
 	//addEventListener(onmousedown, console.log("so"));
+	//onmousedown = function() {console.log('yote')};
+
 }
 
 
@@ -31,12 +34,10 @@ function draw() {
 	
 	//trail.draw();
 
+
 	if (player1.health > 0) {
 		//trail.update(player1.vel);
-
 		eventHandler.update();
-
-
 
 	} else {
 
@@ -99,6 +100,13 @@ function draw() {
 	pop();
 
 
+
+	//Delete enemies from arr if there are too many
+	if (enemy.enemies.length > 300) {
+		for (i = 300; i < enemy.enemies.length; i++) {
+			enemy.enemies.splice(i, 1);
+		}
+	}
 
 
 	//Big loop
@@ -191,7 +199,7 @@ function draw() {
 		// }
 	}
 	if (particle.particlesArr.length > 0) {
-		particle.update()
+		particle.update();
 	}
 
 	//drawing particles

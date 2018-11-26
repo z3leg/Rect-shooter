@@ -29,12 +29,26 @@ class Player {
     }
     shoot() {
         push();
-        this.drawPos = createVector(width/2, height/2);
         rotate(this.projectileAngle);
+
+        this.drawPos = createVector(width/2, height/2 );
+
         if (this.shootInterval - this.shootingSpeed <= 0) {
-            this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle, this.weapon));
-			this.shootInterval = 60;
-		}
+
+            //this.projectileAngle / (this.weapon['projectileAmount'] / 10)
+
+            //console.log(this.projectileAngle)
+
+            for (this.i = 0; this.i < this.weapon['projectileAmount']; this.i++) {
+
+                //this.drawPos = createVector(width/2 + (this.weapon['projectileHeight'] * this.i), height/2 );
+                //console.log(this.weapon['projectileAmount'])
+                //console.log(this.projectileAngle  * this.i/10)
+                
+                this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle + (this.i / 10) , this.weapon));
+                this.shootInterval = 60;
+            }
+        }
         pop();
     }
     takeDamage(damage) {
@@ -59,13 +73,10 @@ class Player {
 
     update() {
         if (this.isAlive) {
-
-            onmousedown = function(){this.shooting = true};
-            onmouseup = function(){this.shooting = false};
             
-            if (this.shooting) {
-                this.shoot();
-            }
+            //if (this.shooting) {
+              //  this.shoot();
+            //}
 
             this.shootInterval--;
 

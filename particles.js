@@ -41,13 +41,13 @@ class Particle {
     draw() {
         push();
         //for (this.i = 0; this.i < this.particlesArr.length; this.i++) {
-            noStroke();
-            fill(this.color[0], this.color[1], this.color[2], 255);
-            rect(this.pos.x, this.pos.y, this.side, this.side);
-
             this.lifespan--;
 
-            if (this.lifespan < 1) { this.opacity-- }
+            if (this.lifespan < 1) { this.opacity -= 2 }
+            noStroke();
+            fill(this.color[0], this.color[1], this.color[2], this.opacity);
+            rect(this.pos.x, this.pos.y, this.side, this.side);
+
         //}
         pop();
     }

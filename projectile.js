@@ -2,6 +2,8 @@ class Projectile {
     constructor(pos, angle, weapon) {
         //WEAPON =  GETS THE PLAYERCURRWEAPON HASH 
         this.muzzlePos = 15;
+        this.angle = angle;
+
         this.destination = p5.Vector.fromAngle(angle);
         this.pos = createVector(pos.x + (this.destination.x * this.muzzlePos),
                                 pos.y + (this.destination.y * this.muzzlePos));
@@ -50,21 +52,10 @@ class Projectile {
         translate(this.pos.x, this.pos.y);
         //Rotating the projectile before it leaves the player
         if (this.currTravelDist < 1) {
-            this.projectileRotation = player1.projectileAngle;
+            this.projectileRotation = this.angle//= player1.projectileAngle;
         }
         rotate(this.projectileRotation)
         rect(-this.vel, 0, this.height, this.width/2 -2);
         pop();
     }
-    // outOfBoundaries() {
-    //     if (this.pos.x + this.side > width) {
-    //         return true;
-    //     } else if (this.pos.x - this.side < 0) {
-    //         return true;
-    //     } else if (this.pos.y + this.side > height) {
-    //         return true;
-    //     } else if (this.pos.y - this.side < 0) {
-    //         return true;
-    //     }
-    // }
 }

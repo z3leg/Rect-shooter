@@ -8,7 +8,7 @@ class EvenHandler {
 
 
 
-    update() {
+    update(mousePress) {
 		this.isKeyPressed = false;
         if (keyIsDown(87)) { player1.applyForce(createVector(0, -playerMvmSpeed)), this.isKeyPressed = true;} //W
         if (keyIsDown(83)) { player1.applyForce(createVector(0, playerMvmSpeed)), this.isKeyPressed = true;} //S
@@ -17,8 +17,8 @@ class EvenHandler {
         
 
 		if (playerControlls['rotating'] == 'mouse') {
-			vMouse = createVector(mouseX-width/2, mouseY-height/2);
-			player1.projectileAngle = vMouse.heading()
+			this.vMouse = createVector(mouseX-width/2, mouseY-height/2);
+			player1.projectileAngle = this.vMouse.heading()
 		} else if (playerControlls['rotating'] == 'keyboard') {
 			if (keyIsDown(LEFT_ARROW)) {
 				player1.projectileAngle -= playerRotateSpeed;
@@ -31,17 +31,8 @@ class EvenHandler {
 
 		if ( playerControlls['shooting'] == 'mouse' ) {
 			//Player this.shooting mouse
-			onmousedown = function(){this.shooting = true};
-			onmouseup = function(){this.shooting = false};
-
-		} else if ( playerControlls['shooting'] == 'keyboard') {
-			//Player this.shooting keyboard
-			if (keyIsDown(32)) { //SPACE
-				this.shooting = true;
-			} else {
-				this.shooting = false;
-			}
-
+			if (mouseIsPressed) { if (mouseButton === LEFT) {this.shooting = true} }
+			if (!mouseIsPressed) { if (mouseButton === LEFT) {this.shooting = false} }
 
 			if (player1.weapon['rapidFire'] && this.shooting) {
 				player1.shoot();
@@ -50,13 +41,22 @@ class EvenHandler {
 					player1.shoot();
 					this.reloaded = false;
 				}
-				if (!keyIsDown(32)) {
-					this.reloaded = true;
-				}
+				if (!mouseIsPressed) { if (mouseButton === LEFT) {this.reloaded = true} }
+			}
+
+		} else if ( playerControlls['shooting'] == 'keyboard') {
+			//Player this.shooting keyboard
+
+			if (keyIsDown(32)) { this.shooting = true } else { this.shooting = false }
+
+			if (player1.weapon['rapidFire'] && this.shooting) {
+				player1.shoot();
+			} else {
+				
+				if (this.reloaded && this.shooting) { player1.shoot(), this.reloaded = false }
+				if (!keyIsDown(32)) { this.reloaded = true }
 			}
 		}
-
-
 
 
 
