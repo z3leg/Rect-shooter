@@ -18,9 +18,6 @@ function setup() {
 
 	deathScreenVal = 0;
 	frameRateInterval = 0;
-	//addEventListener(onmousedown, console.log("so"));
-	//onmousedown = function() {console.log('yote')};
-
 }
 
 
@@ -55,17 +52,6 @@ function draw() {
 		text("You died", width/2, height/2)
 		pop();
 	}
-
-
-	if (keyIsDown(78)) { //N
-		for (i = 0; i < enemy.enemies.length; i++) {
-			enemy.enemies.splice(i, 1);
-		}
-	}
-	if (keyIsDown(70)) { //F
-		enemy.spawn(50);
-	}
-
 
 
 	//Removing projectiles when they exceed the travel dist
@@ -171,9 +157,10 @@ function draw() {
 							player1.xp += enemy.enemies[i].xpDrop;
 
 
-							particle.spawn(5, enemy.enemies[i], player1.projectiles[k].destination);
+							particle.spawn(15, enemy.enemies[i], player1.projectiles[k].destination);
 
 
+							//console.log("Killed enemy XP:", enemy.enemies[i].xpDrop)
 							enemy.enemies.splice(i, 1);
 						} else {
 							enemy.enemies[i].lastPiercingObject = player1.projectiles[k].uid;

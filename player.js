@@ -12,15 +12,16 @@ class Player {
         this.shooting = false;
 
         this.weapon = playerWeaponsArr[playerCurrWeapon]; //returns hash
-         
+        
         this.health = playerHealth;
-        this.shootingSpeed = this.weapon['shootingSpeed'];
-        this.damage = this.weapon['damage'];
+        this.shootingSpeed = this.weapon.shootingSpeed;
+        this.damage = this.weapon.damage;
         
 
 
         this.kills = 0;
         this.xp = 0;
+        this.nextLvlXp = 10;
         this.lvl = 0;
     }
 
@@ -34,18 +35,16 @@ class Player {
         this.drawPos = createVector(width/2, height/2 );
 
         if (this.shootInterval - this.shootingSpeed <= 0) {
+            if (this.weapon.projectileAmount > 1) {
+                this.shootingAngle = this.projectileAngle - this.weapon.projectileAmount / 20
+            }
 
-            //this.projectileAngle / (this.weapon['projectileAmount'] / 10)
-
-            //console.log(this.projectileAngle)
-
-            for (this.i = 0; this.i < this.weapon['projectileAmount']; this.i++) {
+            for (this.i = 0; this.i < this.weapon.projectileAmount; this.i++) {
 
                 //this.drawPos = createVector(width/2 + (this.weapon['projectileHeight'] * this.i), height/2 );
                 //console.log(this.weapon['projectileAmount'])
-                //console.log(this.projectileAngle  * this.i/10)
                 
-                this.projectiles.push(new Projectile(this.drawPos, this.projectileAngle + (this.i / 10) , this.weapon));
+                this.projectiles.push(new Projectile(this.drawPos, this.shootingAngle + (this.i / 10) , this.weapon));
                 this.shootInterval = 60;
             }
         }
@@ -63,7 +62,6 @@ class Player {
         push();
         fill(0, 255, 0, 255);
 
-        //one rect
         rect(width/2 - (this.health/2) /2, //X
             height/2 + this.side/2 + 5, //Y
             (this.health) /2, 5);  //Width & Height
@@ -74,14 +72,14 @@ class Player {
     update() {
         if (this.isAlive) {
             
-            //if (this.shooting) {
-              //  this.shoot();
-            //}
+            if (this.xp >= this.nextLvlXp) {
+                this.lvl++
+                this.nextLvlXp *= 2;
+            }
 
             this.shootInterval--;
 
             this.vel.add(this.acc);
-            //this.pos.add(this.vel);
             this.vel.limit(playerMvmSpeedLimit);
             this.acc.mult(0);
             this.draw(this.projectileAngle);

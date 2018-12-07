@@ -23,19 +23,19 @@ class Enemy {
             //RETURNS HASH
 
             
-            this.xpDrop = player1.lvl + 1 * Math.round(random(4,9));
-            this.lvl = player1.lvl + ( Math.round(random(1,3) *player1.lvl) );
+            this.lvl = player1.lvl + ( Math.round(random(1,3) ) );
+            this.xpDrop = player1.lvl + this.lvl * Math.round(random(5,10));
             
-            this.mvmSpeed = this.currType['mvmSpeed'];
-            this.mvmSpeedLimit = this.currType['mvmSpeedLimit'];
-            this.damage = this.currType['damage'];
-            this.hitSpeed = this.currType['hitSpeed'];
-            this.health = this.currType['health'] * (this.lvl + 1);
+            this.mvmSpeed = this.currType.mvmSpeed;
+            this.mvmSpeedLimit = this.currType.mvmSpeedLimit;
+            this.damage = this.currType.damage;
+            this.hitSpeed = this.currType.hitSpeed;
+            this.health = this.currType.health * (this.lvl + 1);
             this.maxHealth = this.health;
-            this.armor = this.currType['armor'];
-            this.side = this.currType['side'];
-            this.color = this.currType['color'];
-            this.outline = this.currType['outline'];
+            this.armor = this.currType.armor;
+            this.side = this.currType.side;
+            this.color = this.currType.color;
+            this.outline = this.currType.outline;
 
 
             //console.log(this.mvmSpeed, this.mvmSpeedLimit, this.damage, this.hitSpeed, this.health, this.side, this.color)
@@ -75,13 +75,14 @@ class Enemy {
         this.destination = createVector(width/2 - this.side/2, height/2 - this.side/2);
         this.destination.sub(this.pos);
         this.destination.setMag(0.4);
-        //console.log(this.destination)
         this.acc = this.destination;
 
         this.vel.add(this.acc);
         this.pos.add(this.vel);
         this.vel.limit(this.mvmSpeedLimit);
-        this.draw();
+        if (!this.outOfBounds()) {        
+            this.draw();
+        }
         //pop();
         
     }
@@ -95,18 +96,16 @@ class Enemy {
     }
     
     draw() {
-        if (!this.outOfBounds()) {
             push();
             this.outline === true ? stroke(255) : noStroke();
             this.colorIntensity = (this.health / this.maxHealth);
             fill(this.color[0] * this.colorIntensity,
-                 this.color[1]  * this.colorIntensity,
-                 this.color[2]  * this.colorIntensity,
+                 this.color[1] * this.colorIntensity,
+                 this.color[2] * this.colorIntensity,
                  this.color[3]);
 
             rect(this.pos.x, this.pos.y, this.side, this.side);  
             pop();
-        }
     }
 
     pushAway(other) {

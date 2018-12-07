@@ -16,6 +16,19 @@ class EvenHandler {
         if (keyIsDown(68)) { player1.applyForce(createVector(playerMvmSpeed, 0)), this.isKeyPressed = true;} //D
         
 
+		if (keyIsDown(78)) { //N
+			for (i = 0; i < enemy.enemies.length; i++) {
+				enemy.enemies.splice(i, 1);
+			}
+		}
+
+		if (keyIsDown(70)) { enemy.spawn(25) } //F
+		if (keyIsDown(67)) { enemy.spawn(1) } //C
+
+		if (keyIsDown(UP_ARROW)) { frameRate(60) }
+		if (keyIsDown(DOWN_ARROW)) { frameRate(5) }
+
+
 		if (playerControlls['rotating'] == 'mouse') {
 			this.vMouse = createVector(mouseX-width/2, mouseY-height/2);
 			player1.projectileAngle = this.vMouse.heading()
