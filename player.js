@@ -35,16 +35,22 @@ class Player {
         this.drawPos = createVector(width/2, height/2 );
 
         if (this.shootInterval - this.shootingSpeed <= 0) {
+
             if (this.weapon.projectileAmount > 1) {
                 this.shootingAngle = this.projectileAngle - this.weapon.projectileAmount / 20
+            } else {
+                this.shootingAngle = this.projectileAngle
             }
 
             for (this.i = 0; this.i < this.weapon.projectileAmount; this.i++) {
-
-                //this.drawPos = createVector(width/2 + (this.weapon['projectileHeight'] * this.i), height/2 );
-                //console.log(this.weapon['projectileAmount'])
-                
-                this.projectiles.push(new Projectile(this.drawPos, this.shootingAngle + (this.i / 10) , this.weapon));
+                if (this.weapon.accuracy < 100) { //Applying accuracy logic
+                    this.randomAngle = (100 / this.weapon.accuracy) / 100; 
+                } else {
+                    this.randomAngle = 0; 
+                }
+                this.projectiles.push(new Projectile(this.drawPos, //Position
+                                                     this.shootingAngle + (this.i / 10) + random(-this.randomAngle, this.randomAngle), //Shooting angle
+                                                     this.weapon)); //Weapon type
                 this.shootInterval = 60;
             }
         }

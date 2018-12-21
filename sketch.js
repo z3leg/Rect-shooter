@@ -54,7 +54,7 @@ function draw() {
 	}
 
 
-	//Removing projectiles when they exceed the travel dist
+	//Updating and removing projectiles when they exceed the travel dist
 	for (i = 0; i < player1.projectiles.length; i++) {
 		player1.projectiles[i].update();
 		if (player1.projectiles[i].currTravelDist > player1.projectiles[i].travelDist) {
@@ -141,37 +141,41 @@ function draw() {
 
 		//Collision between projectiles and enemies
 		for (k = 0; k < player1.projectiles.length; k++) {
+
 			if (enemy.enemies.length > 0 && player1.projectiles.length > 0) {
-				if (CollisionDetectionSquares(enemy.enemies[i], player1.projectiles[k], false)) {
+				//check if the distance is low enough..... Checking the dist may crash sometimes, "cannot check ... of undefined"
+				//if (dist( enemy.enemies[i].pos.x, enemy.enemies[i].pos.y, player1.projectiles[k].pos.x, player1.projectiles[k].pos.y ) < player1.projectiles[k].side + enemy.enemies[i].side + 50 ) {
+					if (CollisionDetectionSquares(enemy.enemies[i], player1.projectiles[k], false)) {
 
-					//If the currenct piercing object is the same, dont deal any damage
-					if (enemy.enemies[i].lastPiercingObject != player1.projectiles[k].uid) {
+						//If the currenct piercing object is the same, dont deal any damage
+						if (enemy.enemies[i].lastPiercingObject != player1.projectiles[k].uid) {
 
-						
-						enemy.enemies[i].takeDamage(player1.damage);
-						player1.projectiles[k].piercingForce -= enemy.enemies[i].armor;
-						
-						//Enemy death
-						if (enemy.enemies[i].health <= 0) {
-							player1.kills++;
-							player1.xp += enemy.enemies[i].xpDrop;
-
-
-							particle.spawn(15, enemy.enemies[i], player1.projectiles[k].destination);
+							
+							enemy.enemies[i].takeDamage(player1.damage);
+							player1.projectiles[k].piercingForce -= enemy.enemies[i].armor;
+							
+							//Enemy death
+							if (enemy.enemies[i].health <= 0) {
+								player1.kills++;
+								player1.xp += enemy.enemies[i].xpDrop;
 
 
-							//console.log("Killed enemy XP:", enemy.enemies[i].xpDrop)
-							enemy.enemies.splice(i, 1);
-						} else {
-							enemy.enemies[i].lastPiercingObject = player1.projectiles[k].uid;
-						}
-						
-						//Projectile death
-						if (player1.projectiles[k].piercingForce <= 0) {
-							player1.projectiles.splice(k, 1);
+								particle.spawn(15, enemy.enemies[i], player1.projectiles[k].destination);
+
+
+								//console.log("Killed enemy XP:", enemy.enemies[i].xpDrop)
+								enemy.enemies.splice(i, 1);
+							} else {
+								enemy.enemies[i].lastPiercingObject = player1.projectiles[k].uid;
+							}
+							
+							//Projectile death
+							if (player1.projectiles[k].piercingForce <= 0) {
+								player1.projectiles.splice(k, 1);
+							}
 						}
 					}
-				}
+				//}
 			}
 		}
 		
